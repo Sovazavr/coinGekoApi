@@ -5,6 +5,9 @@ import { useAppDispatch } from './hooks/reduxHooks';
 import { getCoinsListThunk, getCoinsMarketsThunk } from './store/slices/coinsListSlice';
 import { useCoins, useIsLoading, useLoadCoins } from './hooks/useStateHook';
 import { CoinsMarkets } from './axios/types';
+import Content from './layout/Content/Content';
+import CoinList from './components/CoinList/CoinList';
+import Header from './layout/Header/Header';
 
 function App() {
 
@@ -29,15 +32,12 @@ function App() {
 
 
   return (
-    <div>
-
-      {coins?.map((e: CoinsMarkets)=>{
-        return(
-          <div>{e.name}</div>
-        )
-      })}
-
-    </div>
+    <>
+      <Header>{ }</Header>
+      <Content>
+        {coins && <CoinList coins={coins} />}
+      </Content>
+    </>
   );
 }
 
