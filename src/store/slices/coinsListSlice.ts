@@ -1,17 +1,28 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { getCoinsList } from "../../axios/axios"
+import { CaseReducer, PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { getCoinsList, getCoinsMarkets } from "../../axios/axios"
+import { CoinsMarkets } from "../../axios/types"
 
-const initialState={
+type StateType ={
+    isLoading: boolean,
+    coins: [],
+    coinsMarkets: CoinsMarkets[],
+}
+
+
+const initialState: StateType = {
     isLoading: true,
-    coins: []
+    coins: [],
+    coinsMarkets: [],
 }
 
 export const getCoinsListThunk = createAsyncThunk("get/coins", async () => getCoinsList())
+export const getCoinsMarketsThunk = createAsyncThunk("get/coins/markets", async () => getCoinsMarkets())
+
 
 export const coinsListSlice = createSlice({
     name: 'coinsList',
     initialState,
-    reducers: {       
+    reducers: {
 
     },
     extraReducers: (builder) => {
@@ -23,7 +34,15 @@ export const coinsListSlice = createSlice({
 
             state.isLoading = true;
         });
-        
+        builder.addCase(getCoinsMarketsThunk.fulfilled, (state, action) => {
+            state.coinsMarkets = action.payload;
+            state.isLoading = false;
+        });
+        builder.addCase(getCoinsMarketsThunk.pending, (state) => {
+
+            state.isLoading = true;
+        });
+
     }
 })
 
