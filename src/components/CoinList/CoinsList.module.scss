@@ -6,3 +6,48 @@
     font-style: normal;
     font-size: small;
 }
+
+.table__line{
+    td {
+        font-weight: 300;
+        text-align: center;
+        padding-bottom: 1em;
+    }
+    .coins__name__block{
+        display: flex;
+        align-items: center;
+        text-align: left;
+        
+        .coins__text{
+            margin-left: 15px;
+            .coins__symbol{
+                font-weight: 200;
+                font-size: 0.7rem;
+            }
+            .coins__name{
+                font-weight: 500;
+            }
+        }
+        img {
+            height: 20px;
+            width: 20px;
+            margin-left: 10px;
+        }
+        
+    }
+    .coins__price{
+        text-align: right;
+        
+    }
+    .change__bad{
+        color: red;
+        text-indent: 15px;
+    }
+    .change__good{
+        color: green;
+        text-indent: 15px;
+    }
+    font-style: normal;
+    font-size: smaller;
+
+}

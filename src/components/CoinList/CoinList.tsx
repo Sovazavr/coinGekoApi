@@ -19,18 +19,22 @@ const CoinList = ({ coins }: Props) => {
       </tr>
       {coins?.map((e: CoinsMarkets, index: number) => {
         return (
-          <tr>
+          <tr className={s.table__line}>
             <td>
               {index}
             </td>
-            <td>
-              {e.name}
+            <td className={s.coins__name__block}>
+              <img src={e.image} />
+              <p className={s.coins__text}>
+                <p className={s.coins__name}>{e.name}</p>
+                <p className={s.coins__symbol}>{e.symbol.toUpperCase()}</p>
+              </p>
             </td>
-            <td>
+            <td className={s.coins__price}>
               {e.current_price}
             </td>
-            <td>
-              {e.price_change_percentage_24h}
+            <td className={e.price_change_24h > 0 ? s.change__good : s.change__bad}>
+              {e.price_change_percentage_24h.toFixed(2)}
             </td>
           </tr>
         )
