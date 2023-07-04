@@ -1,70 +1,82 @@
-import React, { useLayoutEffect, useRef } from 'react'
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { CoinsMarkets } from '../../axios/types'
 import s from "./CoinsList.module.scss"
 import { getCoinsMarketsThunk } from '../../store/slices/coinsListSlice'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { useLoadCoins } from '../../hooks/useStateHook'
+import Pagination from '../Paginator/Pagination'
+import CoinsElement from './CoinsElement'
 
 type Props = {
-
+  coins: CoinsMarkets[],
 }
 
 const CoinList = () => {
+  const [page, setPage] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const dispatch = useAppDispatch()
   let firstRender = useRef(true)
   useLayoutEffect(() => {
     if (firstRender.current) {
       firstRender.current = false
-      dispatch(getCoinsMarketsThunk(2))
+      dispatch(getCoinsMarketsThunk(page))
     } else {
-
-
-
-
+      dispatch(getCoinsMarketsThunk(page))
     }
-  }, [])
+  }, [page])
 
 
-  const coins = useLoadCoins()
-  console.log(coins);
+  const coinsData = useLoadCoins()
+  console.log(coinsData);
+
+
+  const handleNextPageClick = useCallback(() => {
+    const current = page;
+    const next = current + 1;
+    const total = 99;
+
+    setPage(next <= total ? next : current);
+  }, [page, coinsData?.coins]);
+  const handlePrevPageClick = useCallback(() => {
+    const current = page;
+    const prev = current - 1;
+
+    setPage(prev > 0 ? prev : current);
+  }, [page]);
+  const Paginator = <Pagination
+    onNextPageClick={handleNextPageClick}
+    onPrevPageClick={handlePrevPageClick}
+    disable={{
+      left: page === 1,
+      right: page === 99,
+    }}
+    nav={{ current: page, total: 99 }}
+  />
 
   return (
-    <table className={s.table__block}>
-      <tr className={s.table__name}>
-        <th>#</th>
-        <th>Монета</th>
-        <th>Цена</th>
+    <>
+      {Paginator}
+      <table className={s.table__block}>
+        <tr className={s.table__name}>
+          <th>#</th>
+          <th>Монета</th>
+          <th>Цена</th>
 
-        <th>24ч</th>
+          <th>24ч</th>
 
-      </tr>
-      {!!coins ? coins?.map((e: CoinsMarkets, index: number) => {
-        return (
-          <tr className={s.table__line}>
-            <td>
-              {index}
-            </td>
-            <td className={s.coins__name__block}>
-              <img src={e.image} />
-              <p className={s.coins__text}>
-                <p className={s.coins__name}>{e.name}</p>
-                <p className={s.coins__symbol}>{e.symbol.toUpperCase()}</p>
-              </p>
-            </td>
-            <td className={s.coins__price}>
-              {e.current_price}
-            </td>
-            <td className={e.price_change_percentage_24h > 0 ? s.change__good : s.change__bad}>
-              {e.price_change_percentage_24h ? e.price_change_percentage_24h.toFixed(2) : "-"}
-            </td>
-          </tr>
-        )
-      })
-        :
-        <div>LOAD</div>
-      }
-    </table>
+        </tr>
+        {!!coinsData?.coins ? coinsData?.coins?.map((e: CoinsMarkets, index: number) => {
+          return (
+            <CoinsElement element={e} index={index} />
+          )
+        })
+          :
+          <div>LOAD</div>
+        }
+      </table>
+      {Paginator}
+    </>
   )
 }
 
-export default CoinList
+export default React.memo(CoinList)
