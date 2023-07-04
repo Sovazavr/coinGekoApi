@@ -1,14 +1,35 @@
-import React from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 import { CoinsMarkets } from '../../axios/types'
 import s from "./CoinsList.module.scss"
+import { getCoinsMarketsThunk } from '../../store/slices/coinsListSlice'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useLoadCoins } from '../../hooks/useStateHook'
 
 type Props = {
-  coins: CoinsMarkets[],
+
 }
 
-const CoinList = ({ coins }: Props) => {
+const CoinList = () => {
+  const dispatch = useAppDispatch()
+  let firstRender = useRef(true)
+  useLayoutEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      dispatch(getCoinsMarketsThunk(2))
+    } else {
+
+
+
+
+    }
+  }, [])
+
+
+  const coins = useLoadCoins()
+  console.log(coins);
+
   return (
-    <table>
+    <table className={s.table__block}>
       <tr className={s.table__name}>
         <th>#</th>
         <th>Монета</th>
@@ -17,7 +38,7 @@ const CoinList = ({ coins }: Props) => {
         <th>24ч</th>
 
       </tr>
-      {coins?.map((e: CoinsMarkets, index: number) => {
+      {!!coins ? coins?.map((e: CoinsMarkets, index: number) => {
         return (
           <tr className={s.table__line}>
             <td>
@@ -33,12 +54,15 @@ const CoinList = ({ coins }: Props) => {
             <td className={s.coins__price}>
               {e.current_price}
             </td>
-            <td className={e.price_change_24h > 0 ? s.change__good : s.change__bad}>
-              {e.price_change_percentage_24h.toFixed(2)}
+            <td className={e.price_change_percentage_24h > 0 ? s.change__good : s.change__bad}>
+              {e.price_change_percentage_24h ? e.price_change_percentage_24h.toFixed(2) : "-"}
             </td>
           </tr>
         )
-      })}
+      })
+        :
+        <div>LOAD</div>
+      }
     </table>
   )
 }

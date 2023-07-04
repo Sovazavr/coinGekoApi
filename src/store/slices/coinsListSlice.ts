@@ -16,7 +16,7 @@ const initialState: StateType = {
 }
 
 export const getCoinsListThunk = createAsyncThunk("get/coins", async () => getCoinsList())
-export const getCoinsMarketsThunk = createAsyncThunk("get/coins/markets", async () => getCoinsMarkets())
+export const getCoinsMarketsThunk = createAsyncThunk("get/coins/markets", async (page: number) => getCoinsMarkets(page))
 
 
 export const coinsListSlice = createSlice({
